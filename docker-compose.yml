@@ -1,0 +1,127 @@
+version: "3.5"
+
+services:
+  etcd1:
+    image: service-etcd:1.0.0
+    container_name: etcd1
+    networks: 
+      service-discovery:
+        ipv4_address: 192.169.0.2
+    command:
+      - "bash"
+      - "-c" 
+      - "source /etcd.conf && \
+        THIS_NAME=$${NAME_1} && \
+        THIS_IP=192.169.0.2 && \
+        etcd --data-dir=data.etcd --name $${THIS_NAME} \
+          --initial-advertise-peer-urls http://$${THIS_IP}:2380 --listen-peer-urls http://$${THIS_IP}:2380 \
+          --advertise-client-urls http://$${THIS_IP}:2379 --listen-client-urls http://$${THIS_IP}:2379 \
+          --initial-cluster $${CLUSTER} \
+          --initial-cluster-state $${CLUSTER_STATE} --initial-cluster-token $${TOKEN}"
+
+  etcd2:
+    image: service-etcd:1.0.0
+    container_name: etcd2
+    networks: 
+      service-discovery:
+        ipv4_address: 192.169.0.3
+    command:
+      - "bash"
+      - "-c" 
+      - "source /etcd.conf && \
+        THIS_NAME=$${NAME_2} && \
+        THIS_IP=192.169.0.3 && \
+        etcd --data-dir=data.etcd --name $${THIS_NAME} \
+          --initial-advertise-peer-urls http://$${THIS_IP}:2380 --listen-peer-urls http://$${THIS_IP}:2380 \
+          --advertise-client-urls http://$${THIS_IP}:2379 --listen-client-urls http://$${THIS_IP}:2379 \
+          --initial-cluster $${CLUSTER} \
+          --initial-cluster-state $${CLUSTER_STATE} --initial-cluster-token $${TOKEN}"
+
+  etcd3:
+    image: service-etcd:1.0.0
+    container_name: etcd3
+    networks: 
+      service-discovery:
+        ipv4_address: 192.169.0.4
+    command:
+      - "bash"
+      - "-c" 
+      - "source /etcd.conf && \
+        THIS_NAME=$${NAME_3} && \
+        THIS_IP=192.169.0.4 && \
+        etcd --data-dir=data.etcd --name $${THIS_NAME} \
+          --initial-advertise-peer-urls http://$${THIS_IP}:2380 --listen-peer-urls http://$${THIS_IP}:2380 \
+          --advertise-client-urls http://$${THIS_IP}:2379 --listen-client-urls http://$${THIS_IP}:2379 \
+          --initial-cluster $${CLUSTER} \
+          --initial-cluster-state $${CLUSTER_STATE} --initial-cluster-token $${TOKEN}"
+  mysql:
+    image: service-mysql:1.0.0
+    container_name: mysql
+    networks:
+      service-discovery:
+        ipv4_address: 192.169.0.18
+    command:
+      - "bash"
+      - "-c"
+      - "service mysql restart && /initDB.sh && sleep 1000"
+
+  userlist:
+    image: service-userlist:1.0.0
+    container_name: userlist
+    networks:
+      service-discovery:
+        ipv4_address: 192.169.0.11
+    
+    command:
+      - "bash"
+      - "-c"
+      - "cd service-userlist && ./app"
+
+  mail:
+    image: service-mail:1.0.0
+    container_name: mail
+    networks:
+      service-discovery:
+        ipv4_address: 192.169.0.10
+    command:
+      - "bash"
+      - "-c"
+      - "node server.js"
+
+  registry:
+    image: service-registry:1.0.0
+    container_name: registry
+    networks:
+      service-discovery:
+        ipv4_address: 192.169.0.9
+    command:
+      - "bash"
+      - "-c"
+      - "./app"
+
+  balance:
+    image: service-balance:1.0.0
+    container_name: balance
+    ports:
+      - "8080:5050"
+    networks:
+      service-discovery:
+        ipv4_address: 192.169.0.8
+    
+    command:
+      - "bash"
+      - "-c"
+      - "./app"
+
+
+networks: 
+  service-discovery:
+    name: service-discovery
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.169.0.0/20
+      # aux_addreses:
+      #   - etcd1: 192.169.0.2
+      #   - etcd2: 192.169.0.3
+      #   - etcd3: 192.169.0.4

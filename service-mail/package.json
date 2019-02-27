@@ -1,0 +1,17 @@
+{
+  "name": "service-mail",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "etcd3": "^0.2.11",
+    "nodemailer": "^5.1.1",
+    "request": "^2.88.0",
+    "string-template": "^1.0.0"
+  }
+}

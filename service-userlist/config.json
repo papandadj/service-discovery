@@ -1,0 +1,10 @@
+{
+    "MysqlHost": "mysql",
+    "MysqlUser": "root",
+    "MysqlPort": 3306,
+    "MysqlPassword": "123456",
+    "MysqlDB": "servicediscovery",
+    "EtcdRegistryHost": "http://registry",
+    "EtcdRegistryPort": 8080,
+    "Port": 6060
+}
